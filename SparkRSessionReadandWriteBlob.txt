@@ -1,0 +1,23 @@
+if (nchar(Sys.getenv("SPARK_HOME")) < 1) {
+  Sys.setenv(SPARK_HOME = "/home/spark")
+}
+library(SparkR, lib.loc = c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib")))
+
+#Change your appName to your application name
+sparkR.session(master="",appName="SampleAppByManju",sparkHome = Sys.getenv("SPARK_Home")) 
+
+
+#Read data from HDFS (Blob Storage) and load it to R Dataframe, Make a note, HDInsight cluster has this sample data. for your real data change the path according to your HDFS folder
+
+df <- read.df("/HdiSamples/HdiSamples/FoodInspectionData/Food_Inspections1.csv", "csv")
+head(df)
+
+#Manupulate the data 
+transformeddf <- select(df, "_c1","_c2")
+head(transformeddf)
+
+#write transformed data back to HDFS (Blob storage)
+write.df(transformeddf,"transformeddf.csv","csv")
+
+#end the sparksession
+sparkR.session.stop()
